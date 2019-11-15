@@ -1,5 +1,5 @@
-const ip = "10.10.28.76";
-const port = "8010";
+const ip = "localhost";
+const port = "8011";
 const protocolHttp = "http://";
 const protocolHttps = "https://";
 function getIp(){

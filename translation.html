@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+    <link rel="stylesheet" href="./css/jquery-ui.css">
+    <link rel="stylesheet" href="./css/jquery.toast.min.css">
+    <link rel="stylesheet" href="./css/jquery-ui-timepicker-addon.css">
+</head>
+
+<body>
+    <form id="form">
+        <h1>交易信息</h1>
+        <p>
+            <label>账户</label>
+            <input id="account" name="account" type="text" list="accountList" autocomplete="off">
+            <datalist id="accountList">
+                    <!-- <option value="BMW">
+                    <option value="Ford">
+                    <option value="Volvo"> -->
+            </datalist>
+        </p>
+        <p>
+            <label>交易金额</label>
+            <input name="amount" type="text" value="">
+        </p>
+        <p>
+            <label>日期</label>
+            <input id="datepicker" name="date">
+        </p>
+        <p>
+            <label>交易摘要</label>
+            <input name="summary">
+        </p>
+        <p>
+            <label>交易方</label>
+            <input id="counterpart" name="counterpart" list="userList" type="text" autocomplete="off">
+            <datalist id="userList"></datalist>
+        </p>
+        <p>
+            <label>类型</label>
+            <label><input type="radio" name="type" value="支出" checked="checked">支出</label>
+            <label><input type="radio" name="type" value="收入">收入</label>
+        </p>
+        <p>
+            <label>是否信贷</label>
+            <input id="isCredit" type="radio" name="credit" value="信贷">
+        </p>
+        <div id="creditType" style="display: none;">
+            <!-- 信贷显示 -->
+            <label>信贷类型</label>
+            <select id="mySelect" name="method">
+                <option value="花呗">花呗</option>
+                <option value="代付">代付</option>
+                <option value="saab">等额本息</option>
+                <option value="opel">小米贷款制</option>
+                <option value="audi">微粒贷制</option>
+                <option value="audi">月付息</option>
+                <option value="audi">本息和</option>
+            </select>
+            <!-- 等额本息 -->
+            <div id="rate" style="display: none;">
+                <p><label>日利率</label><input name="dayRate"></p>
+
+                <p><label>还款日</label><input name="day"></p>
+            </div>
+            <div style="display: none;">
+                <p><label>分期数</label><input name="period"></p>
+            </div>
+            <div style="display: none;">
+                <p><label>最后还款日期</label><input name="endDate"></p>
+            </div>
+            <!-- 通过手续费计算 -->
+            <div id="fee" style="display: none;">
+                <p><label>费率</label><input name="fee"></p>
+            </div>
+
+        </div>
+        <p>
+            <label>渠道</label>
+            <label><input type="radio" name="channel" value="支付宝" checked="checked">支付宝</label>
+            <label><input type="radio" name="channel" value="微信">微信</label>
+            <label><input type="radio" name="channel" value="农行APP">农行APP</label>
+            <label><input type="radio" name="channel" value="招商App">招商App</label>
+            <label><input type="radio" name="channel" value="其他柜面">其他柜面</label>
+        </p>
+        <button id="save">保存</button>
+        <button id="clear" type="reset">清空</button>
+        <button id="return">返回</button>
+
+    </form>
+</body>
+<script src="./js/jquery-2.1.1.min.js"></script>
+<script src="./js/jquery.toast.min.js"></script>
+<script src="js/config.js"></script>
+<script src="js/jquery-ui.js"></script>
+<script src="js/jquery-ui-timepicker-addon.js"></script>
+<script>
+    //   $( function() {
+    //     $( "#datepicker" ).datepicker();
+    //   } );
+    // 查询账号
+    function serarchInput(inputAccount,url,listId){
+        $.ajax({
+                url: getBaseUrl() + url,
+                type: 'GET',
+                data: {key:inputAccount},
+                // 如果用json格式发送。
+                //  data:{jsonStr:JSON.stringify(json)},
+                success: function (response) {
+                    if (response.result) {
+                        console.log(response.data);
+                        displayInput(response.data,listId);
+                    } else {
+                        $.toast({
+                            text: response.message,
+                            hideAfter: 500   // in milli seconds
+                        })
+                    }
+                },
+                error: function (data) {
+                    alert("网络错误");
+                },
+            });
+    }
+    // 显示待选框
+    function displayInput(values,listId){
+        var elementName = '#'+listId;
+        $(elementName).empty();
+        for(i=0;i<values.length;i++){
+            var add_options = '<option value="' + values[i] + '">'+ values[i] + '</option>';
+            $(elementName).append(add_options);
+        }
+    }
+    $(document).ready(function () {
+        //当输入框获取焦点时就加载账户
+        serarchInput('','/account/search','accountList');
+        serarchInput('','/user/search','userList');
+        //账户查询与输入
+        $('#account').bind('keyup',function (event) {
+            var inputAccount = $('#account').val();
+            console.log(inputAccount);
+            serarchInput(inputAccount,'/account/search','accountList');
+        });
+        // 交易方查询与输入
+        $('#counterpart').bind('keyup',function (event) {
+            var inputAccount = $('#counterpart').val();
+            console.log(inputAccount);
+            serarchInput(inputAccount,'/user/search','userList');
+        });
+        //保存数据
+        $('#save').click(function (event) {
+            // Json 字符串传输
+            // var json = $("#form").serializeArray();
+            // var name = document.getElementsByName("name")[0].value;
+            // var iduser = document.getElementsByName("iduser")[0].value;
+            // if (name == "" || iduser == "") {
+            //     // 如果有一个为空，则不能提交
+            //     alert("请填入必填项");
+            //     event.preventDefault();
+            // } else {
+            // console.log(JSON.stringify(json));
+            $("#save").attr('disabled', true);
+            // $("#form").attr("action","http://localhost:8010/adduser");
+            // $("#form").submit(function(){return true;});
+            $.ajax({
+                url: getBaseUrl() + "/cash/receive",
+                // url:"http://localhost:8010/loan/loans",
+                type: 'POST',
+                data: $("#form").serialize(),
+                // 如果用json格式发送。
+                //  data:{jsonStr:JSON.stringify(json)},
+                success: function (responsedata) {
+                    if (responsedata.result) {
+                        $.toast({
+                            text: "保存成功",
+                            hideAfter: 300   // in milli seconds
+                        })
+                    } else {
+                        $.toast({
+                            text: responsedata.message,
+                            hideAfter: 500   // in milli seconds
+                        })
+                    }
+
+                    $("#save").attr('disabled', false);
+                },
+                error: function (data) {
+                    alert("错误");
+                    $("#save").attr('disabled', false);
+                },
+            });
+            // }
+        });
+        // 返回上一页
+        $('#return').click(function (event) {
+            history.back();
+        });
+        // 日期选择器
+        // $("#datepicker").datepicker();
+        $('#datepicker').datetimepicker({
+            dateFormat: "yy-mm-dd"
+        });
+        $('#datepicker').datetimepicker('setDate', new Date());
+        // select 监听事件
+        $('#mySelect').change(function () {
+            alert($(this).children('option:selected').val());
+        });
+        // 是否信贷单击事件
+        $('#isCredit').click(function (event) {
+            var $radio = $(this);
+            // if this was previously checked
+            if ($radio.data('waschecked') == true) {
+                $('#creditType').hide();
+                $radio.prop('checked', false);
+                $radio.data('waschecked', false);
+            } else {
+                $('#creditType').show();
+                $radio.prop('checked', true);
+                $radio.data('waschecked', true);
+            }
+        });
+
+        // 如果是信贷
+        // $('#isCredit').click(function (event) {
+        //     if ($(this).attr("checked")) {
+        //         alert('选中');
+        //         // 选中，再次点击设置为未选中
+        //         $(this).attr("checked") = false;
+        //         $('#creditType').hide();
+        //     } else {
+        //         alert('未选中');
+        //         $('#creditType').show();
+        //     }
+        // });
+    });
+</script>
+
+</html>

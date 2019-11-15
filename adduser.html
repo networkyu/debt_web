@@ -31,7 +31,7 @@
 <body>
     <div class="header">
         <div class="am-g">
-            <h1>人员信息</h1>
+            <h1>交易信息</h1>
         </div>
     </div>
 
@@ -51,7 +51,7 @@
 
                 <div class="am-g am-margin-top-sm">
                     <div class="col-sm-3 am-text-right">
-                        外包账户*
+                        交易金额*
                     </div>
                     <div class="col-sm-7 col-end">
                         <input type="text" class="am-input-sm" name="iduser">
@@ -59,7 +59,7 @@
                 </div>
                 <div class="am-g am-margin-top-sm">
                     <div class="col-sm-3 am-text-right">
-                        姓名*
+                        日期*
                     </div>
                     <div class="col-sm-7 col-end">
                         <input type="text" class="am-input-sm" name="name">
@@ -67,44 +67,75 @@
                 </div>
                 <div class="am-g am-margin-top-sm">
                     <div class="col-sm-3 am-text-right">
-                        邮箱
+                        描述
                     </div>
                     <div class="col-sm-7 col-end">
                         <input type="email" class="am-input-sm" name="email">
                     </div>
                 </div>
+
                 <div class="am-g am-margin-top-sm">
                     <div class="col-sm-3 am-text-right">
-                       电话
-                    </div>
-                    <div class="col-sm-7 col-end">
-                        <input type="tel" class="am-input-sm" name="tel">
-                    </div>
-                </div>
-                <div class="am-g am-margin-top-sm">
-                    <div class="col-sm-3 am-text-right">
-                        公司名称
+                        交易方
                     </div>
                     <div class="col-sm-7 col-end">
                         <input type="text" class="am-input-sm" name="company">
                     </div>
                 </div>
                 <div class="am-g am-margin-top-sm">
-                        <div class="col-sm-3 am-text-right">
-                            擅长
-                        </div>
-                        <div class="col-sm-7 col-end">
-                            <input type="text" class="am-input-sm" name="profession">
-                        </div>
+                    <div class="col-sm-3 am-text-right">
+                        类型
                     </div>
+                    <div class="col-sm-7 col-end">
+                        <label><input type="radio" name="sex" value="支出" checked="checked">支出</label>
+                        <label><input type="radio" name="sex" value="收入">收入</label>
+                    </div>
+                </div>
+                <div class="am-g am-margin-top-sm">
+                    <div class="col-sm-3 am-text-right">
+                        交易方式
+                    </div>
+                    <div class="col-sm-7 col-end">
+                        <!-- <label><input type="radio" name="method" value="消费" checked="checked">消费</label> -->
+                        <label ><input  type="radio" name="method" value="信贷">信贷</label>
+                        <button class="method">测试</button>
+                    </div>
+                </div>
                 <div class="am-g am-margin-top-sm">
                         <div class="col-sm-3 am-text-right">
-                            密码
+                            信贷类型
                         </div>
                         <div class="col-sm-7 col-end">
-                            <input type="text" class="am-input-sm" name="password">
+                                <select>
+                                        <option value="volvo">账单制</option>
+                                        <option value="saab">等额本息</option>
+                                        <option value="opel">小米贷款制</option>
+                                        <option value="audi">微粒贷制</option>
+                                        <option value="audi">月付息</option>
+                                        <option value="audi">本息和</option>
+                                    </select>
                         </div>
                     </div>
+                    <div class="am-g am-margin-top-sm">
+                            <div class="col-sm-3 am-text-right">
+                                利率
+                            </div>
+                            <div class="col-sm-7 col-end">
+                                <input type="text" class="am-input-sm" name="company">
+                            </div>
+                        </div>
+                <div class="am-g am-margin-top-sm">
+                    <div class="col-sm-3 am-text-right">
+                        渠道
+                    </div>
+                    <div class="col-sm-7 col-end">
+                        <label><input type="radio" name="channel" value="支出" checked="checked">支付宝</label>
+                        <label><input type="radio" name="channel" value="收入">微信</label>
+                        <label><input type="radio" name="channel" value="支出">农行APP</label>
+                        <label><input type="radio" name="channel" value="收入">招商App</label>
+                        <label><input type="radio" name="channel" value="收入">其他柜面</label>
+                    </div>
+                </div>
                 <div class="am-cf">
                     <input id="save" type="button" name="" value="保 存" class="am-btn am-btn-primary am-btn-sm am-fl">
                     <input id="return" type="button" name="" value="返回" class="am-btn am-btn-default am-btn-sm am-fr">
@@ -117,6 +148,10 @@
 <script src="./js/jquery.toast.min.js"></script>
 <script>
     $(document).ready(function () {
+        $('#method').click(function (event) {
+            console.log('sssdsf');
+        });
+        // $('input:radio:first').attr('checked', 'true');
         $('#return').click(function (event) {
             history.back();
         });
