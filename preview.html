@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>预览</title>
+    <link rel="stylesheet" href="./css/jquery.toast.min.css">
+    <link rel="stylesheet" href="./datatables/datatables.css">
+</head>
+<style>
+    table {
+        border-collapse: collapse;
+    }
+</style>
+
+
+<body>
+    <div>姓名：<label id="host"></label></div>
+    <div>应还<label id="val1">0</label><button id="dis1">显示</button>
+        <div id="detail1" style="display: none;">
+            <table border="1" id="arrears"class="display" style="width:100%">
+                <thead>
+                    <tr>
+                        <th>账户</th>
+                        <th>借日期</th>
+                        <th>业务</th>
+                        <th>类型</th>
+                        <th>金额</th>
+                        <th>描述</th>
+                        <th>还日期</th>
+                        <th>待还</th>
+                        <th>还款日</th>
+                    </tr>
+                </thead>
+
+            </table>
+        </div>
+    </div>
+    <div>应收<label id="val2">0</label><button id="dis2">显示</button>
+        <div id="detail2" style="display: none;">
+        </div>
+    </div>
+    <div>现金<label id="val3">0</label><button id="dis3">显示</button>
+        <div id="detail3" style="display: none;">
+        </div>
+    </div>
+    <div>总资产<label id="val4">0</label></div>
+</body>
+<script src="./js/jquery-2.1.1.min.js"></script>
+<script src="./js/jquery.toast.min.js"></script>
+<script src="./datatables/datatables.js"></script>
+<script src="js/config.js"></script>
+<script>
+    // 显示与隐藏明细
+    function toggleDetail(dId, bId) {
+        var dIdt = "#" + dId;
+        var bIdt = "#" + bId;
+        if ($(dIdt).is(':hidden')) {
+            $(dIdt).show();
+            $(bIdt).text('隐藏');
+        } else {
+            $(dIdt).hide();
+            $(bIdt).text('显示');
+        }
+    }
+    $('#dis1').click(function (event) {
+        toggleDetail("detail1", "dis1");
+    });
+    $('#dis2').click(function (event) {
+        toggleDetail("detail2", "dis2");
+    });
+    $('#dis3').click(function (event) {
+        toggleDetail("detail2", "dis3");
+    });
+    // 请求数据
+    $(document).ready(function () {
+        $.ajax({
+            url: getBaseUrl() + "/preview/host",
+            // url:"http://localhost:8010/loan/loans",
+            type: 'GET',
+            //data: $("#form").serialize(),
+            // 如果用json格式发送。
+            //  data:{jsonStr:JSON.stringify(json)},
+            success: function (responsedata) {
+                if (responsedata.status = "200") {
+                    load(responsedata.data);
+                } else {
+                    console.log(responsedata);
+                    $.toast({
+                        text: responsedata.errMsg,
+                        hideAfter: 500   // in milli seconds
+                    })
+                }
+
+                $("#save").attr('disabled', false);
+            },
+            error: function (data) {
+                alert("错误");
+                $("#save").attr('disabled', false);
+            },
+        });
+    });
+    function load(obj) {
+        $("#host").text(obj.host);
+        $("#val1").text(obj.arrears);
+        $("#val2").text(obj.receviable);
+        loadArrears(obj.arrearsDetail);
+    }
+    function loadArrears(details) {
+        var arr = getupDate(details);
+        $('#arrears').DataTable({
+        	data: arr
+        });
+    }
+    function getupDate(details) {
+        var arr = new Array();
+        for (var i = 0; i < details.length; i++) {
+            var obj = details[i];
+            var objArr = new Array();
+            // 交易日期
+            // public String date1;
+            // public String date2;
+            // // 交易金额
+            // public String[] amounts;
+            // // 交易摘要
+            // public String[] summary;
+            // public String type;
+            // public String business;
+            // public String account;
+            // public String amount;
+            // // 还款日。
+            // public String day;
+            objArr[0] = obj.account;
+            objArr[1] = obj.date1;
+            objArr[2] = obj.business;
+            objArr[3] = obj.type;
+            if(!obj.amounts){
+                var sum = 0;
+                for(am in obj.amounts){
+                    sum = sum + am;
+                }
+                objArr[4] = sum;
+            } else{
+                objArr[4] = "";
+            }
+            if(!obj.summary){
+                var sum = "";
+                for(am in obj.amounts){
+                    sum = sum + am;
+                }
+                objArr[5] = sum;
+            } else{
+                objArr[5]  = "";
+            }
+            objArr[6] = obj.date2;
+            objArr[7] = obj.amount;
+            objArr[8] = obj.day;
+            arr[i] = objArr;
+        }
+        return arr;
+    }
+</script>
+
+</html>

@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>功能函数</title>
+    <link rel="stylesheet" href="./css/jquery.toast.min.css">
+</head>
+
+<body>
+    <p>账户名：<input id="account" /></p>
+    <p>业务名称：
+        <select id="business">
+            <option value="1">活期待还查询</option>
+            <option value="2">总待还查询</option>
+            <option value="3">明细查询</option>
+        </select>
+    </p>
+    <p>结果:
+        <textarea id="result">
+
+        </textarea>
+    </p>
+    <p><button id="exe">查询</button></p>
+</body>
+<script src="./js/jquery-2.1.1.min.js"></script>
+<script src="./js/jquery.toast.min.js"></script>
+<script src="js/config.js"></script>
+<script>
+    $('#exe').click(function (event) {
+        var business = $('#business').val();
+        console.log(business);
+        var url = getBaseUrl();
+        if (business == "1") {
+            url = url + "/fun/await";
+            data = { "account": $("#account").val(), "type": "活期" };
+        }
+        $.ajax({
+            url: url,
+            // url:"http://localhost:8010/loan/loans",
+            type: 'GET',
+            data: data,
+            // 如果用json格式发送。
+            //  data:{jsonStr:JSON.stringify(json)},
+            success: function (responsedata) {
+                if (responsedata.status = "200") {
+                    $.toast({
+                        text: "查询成功",
+                        hideAfter: 300   // in milli seconds
+                    })
+                    $("#result").text(responsedata.data);
+                    console.log(responsedata)
+                } else {
+                    console.log(responsedata)
+                    $.toast({
+                        text: responsedata.message,
+                        hideAfter: 500   // in milli seconds
+                    })
+                }
+
+                $("#exe").attr('disabled', false);
+            },
+            error: function (data) {
+                alert("错误");
+                $("#exe").attr('disabled', false);
+            },
+        });
+    });
+</script>
+
+</html>

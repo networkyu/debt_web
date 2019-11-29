@@ -12,27 +12,41 @@
 		src="https://cdn.datatables.net/1.10.19/js/jquery.dataTables.js"></script>
 </head>
 <body>
-        <table class="display" id="table1">
-                <thead>
-                  <tr align="left">
-                    <th>账户</th>
-                    <th>姓名</th>
-                    <th>邮箱</th>
-                    <th>电话</th>
-                    <th>公司</th>
-                    <th>擅长</th>
-                  </tr>
-                </thead>
-                <!-- <tbody id="demand-table">
-          
-                </tbody> -->
-              </table>
+  <table id="example" class="display" style="width:100%">
+    <thead>
+        <tr>
+            <th>First name</th>
+            <th>Last name</th>
+            <th>Position</th>
+            <th>Office</th>
+            <th>Start date</th>
+            <th>Salary</th>
+        </tr>
+    </thead>
+    <tfoot>
+        <tr>
+            <th>First name</th>
+            <th>Last name</th>
+            <th>Position</th>
+            <th>Office</th>
+            <th>Start date</th>
+            <th>Salary</th>
+        </tr>
+    </tfoot>
+</table>
 </body>
 <script>
-        $(document).ready(function() {
-          $('#table1').DataTable();
-          $('#table2').DataTable();
-          $('#table3').DataTable();
-      } );
+      //   $(document).ready(function() {
+      //     $('#table1').DataTable();
+      //     $('#table2').DataTable();
+      //     $('#table3').DataTable();
+      // } );
+      $(document).ready(function() {
+    $('#example').DataTable( {
+        "processing": true,
+        "serverSide": true,
+        "ajax": "../server_side/scripts/server_processing.php"
+    } );
+} );
         </script>
 </html>
