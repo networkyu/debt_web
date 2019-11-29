@@ -18,9 +18,10 @@
 
 <body>
     <div>姓名：<label id="host"></label></div>
+    <div>总资产：<label id="val4"></label></div>
     <div>应还<label id="val1">0</label><button id="dis1">显示</button>
         <div id="detail1" style="display: none;">
-            <table border="1" id="arrears"class="display" style="width:100%">
+            <table border="1" id="arrears" class="display" style="width:100%">
                 <thead>
                     <tr>
                         <th>账户</th>
@@ -40,13 +41,41 @@
     </div>
     <div>应收<label id="val2">0</label><button id="dis2">显示</button>
         <div id="detail2" style="display: none;">
+            <table border="1" id="receive" class="display" style="width:100%">
+                <thead>
+                    <tr>
+                        <th>账户</th>
+                        <th>借日期</th>
+                        <th>业务</th>
+                        <th>类型</th>
+                        <th>金额</th>
+                        <th>描述</th>
+                        <th>还日期</th>
+                        <th>待还</th>
+                        <th>还款日</th>
+                    </tr>
+                </thead>
+
+            </table>
         </div>
     </div>
-    <div>现金<label id="val3">0</label><button id="dis3">显示</button>
+
+    <div>现金<label id="val3">0</label>
+        <button id="dis3">显示</button>
         <div id="detail3" style="display: none;">
+            <table border="1" id="cash" class="display" style="width:100%">
+                <thead>
+                    <tr>
+                        <th>账户</th>
+                        <th>金额</th>
+                    </tr>
+                </thead>
         </div>
     </div>
-    <div>总资产<label id="val4">0</label></div>
+
+
+
+
 </body>
 <script src="./js/jquery-2.1.1.min.js"></script>
 <script src="./js/jquery.toast.min.js"></script>
@@ -72,7 +101,7 @@
         toggleDetail("detail2", "dis2");
     });
     $('#dis3').click(function (event) {
-        toggleDetail("detail2", "dis3");
+        toggleDetail("detail3", "dis3");
     });
     // 请求数据
     $(document).ready(function () {
@@ -106,57 +135,74 @@
         $("#host").text(obj.host);
         $("#val1").text(obj.arrears);
         $("#val2").text(obj.receviable);
-        loadArrears(obj.arrearsDetail);
+        $("#val3").text(obj.cash);
+        $("#val4").text(obj.balance);
+        loadArrears(obj.arrearsDetail, "arrears");
+        loadArrears(obj.receviableDetail, "receive");
+        loadArrears(obj.cashDetail, "cash");
     }
-    function loadArrears(details) {
-        var arr = getupDate(details);
-        $('#arrears').DataTable({
-        	data: arr
-        });
+    function loadArrears(details, dataname) {
+
+        if (dataname == "arrears") {
+            var arr = getupDate(details);
+            $('#arrears').DataTable({
+                data: arr
+            });
+        }
+        if (dataname == "receive") {
+            var arr = getupDate(details);
+            $('#receive').DataTable({
+                data: arr
+            });
+        }
+        if (dataname == "cash") {
+            var arr = getupCash(details);
+            $('#cash').DataTable({
+                data: arr
+            });
+        }
     }
     function getupDate(details) {
         var arr = new Array();
         for (var i = 0; i < details.length; i++) {
             var obj = details[i];
             var objArr = new Array();
-            // 交易日期
-            // public String date1;
-            // public String date2;
-            // // 交易金额
-            // public String[] amounts;
-            // // 交易摘要
-            // public String[] summary;
-            // public String type;
-            // public String business;
-            // public String account;
-            // public String amount;
-            // // 还款日。
-            // public String day;
             objArr[0] = obj.account;
             objArr[1] = obj.date1;
             objArr[2] = obj.business;
             objArr[3] = obj.type;
-            if(!obj.amounts){
+            if (!obj.amounts) {
                 var sum = 0;
-                for(am in obj.amounts){
+                for (am in obj.amounts) {
                     sum = sum + am;
                 }
                 objArr[4] = sum;
-            } else{
+            } else {
                 objArr[4] = "";
             }
-            if(!obj.summary){
+            if (!obj.summary) {
                 var sum = "";
-                for(am in obj.amounts){
+                for (am in obj.amounts) {
                     sum = sum + am;
                 }
                 objArr[5] = sum;
-            } else{
-                objArr[5]  = "";
+            } else {
+                objArr[5] = "";
             }
             objArr[6] = obj.date2;
             objArr[7] = obj.amount;
             objArr[8] = obj.day;
+            arr[i] = objArr;
+        }
+        return arr;
+    }
+    function getupCash(details) {
+        var arr = new Array();
+        for (var i = 0; i < details.length; i++) {
+            var obj = details[i];
+            var objArr = new Array();
+            objArr[0] = obj.account;
+            objArr[1] = obj.amount;
             arr[i] = objArr;
         }
         return arr;
