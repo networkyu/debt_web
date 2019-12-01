@@ -16,6 +16,8 @@
             <option value="1">活期待还查询</option>
             <option value="2">总待还查询</option>
             <option value="3">明细查询</option>
+            <option value="4">余额查询</option>
+            <option value="5">账户清零</option>
         </select>
     </p>
     <p>结果:
@@ -33,9 +35,16 @@
         var business = $('#business').val();
         console.log(business);
         var url = getBaseUrl();
+        var data = null;
         if (business == "1") {
             url = url + "/fun/await";
             data = { "account": $("#account").val(), "type": "活期" };
+        }
+        if (business == "5") {
+            url = url + "/account/clear";
+            if($("#account").val().length != 0){
+                data = { "account": $("#account").val()};
+            }
         }
         $.ajax({
             url: url,
